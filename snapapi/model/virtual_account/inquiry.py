@@ -22,7 +22,6 @@ class InquiryHeader(TransactionHeader):
         )
     channel_id: str = Field(
             description='Channel pembayaran sesuai dengan kode dari Bank', 
-            min_length=2, 
             max_length=5
         )
 

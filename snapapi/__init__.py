@@ -2,7 +2,7 @@
 # SNAP-API: init
 # Author: S Deta Harvianto <sdetta@gmail.com>
 
-__version__ = "0.1.3"
+__version__ = "0.1.4"
 
 from .applications import SNAPAPI as SNAPAPI
 from .responses import SNAPResponse as SNAPResponse

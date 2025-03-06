@@ -52,12 +52,11 @@ class SNAPRoute(APIRoute):
                         )
                 else:
                     _logger.error(exc, exc_info=True)
+                    message = additional_message = None
                     if hasattr(exc, 'status_code')\
                         and hasattr(exc, 'case_code'):
                         status_code = exc.status_code
                         case_code = exc.case_code
-                        message = None
-                        additional_message = None
                         if hasattr(exc, 'message'):
                             message = exc.message
                         if hasattr(exc, 'additional_message'):
@@ -65,7 +64,6 @@ class SNAPRoute(APIRoute):
                     else:
                         status_code = codes.STATUS_CODE_500
                         case_code = codes.CASE_CODE_01
-                        additional_message = None
                     error = exceptions.ErrorMessage(
                             status_code=status_code,
                             service_code=self.service_code,

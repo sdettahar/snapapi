@@ -26,7 +26,7 @@ $ chmod 600 ~/.snapapi/snapapi.conf
 
 ```shell
     
-{snapapi}$ uvicorn app:demo
+{snapapi}$ uvicorn app:demo --reload
 
 ```
 

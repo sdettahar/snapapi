@@ -13,7 +13,7 @@ class BillAmount(BaseModel):
     value: str = Field(
             description='Nominal Tagihan dengan 2 desimal. "\
             "Biasanya kebijakan Bank minimum pembayaran 10rb',
-            pattern="^(1\d{4,}|[2-9]\d{4,})\.\d{2}$"
+            pattern="^\d{1,}\.\d{2}$"
         )
     currency: str = Field(
             default='IDR', 
@@ -42,24 +42,26 @@ class BillDetail(BaseModel):
     model_config = ConfigDict(
             field_title_generator=lambda field_name, field_info: field_name
         )
-    billCode: str = Field(
-            default='', 
+    billCode: Union[str, None] = Field(
+            default=None,
             min_length=2,
             max_length=2,
             description="Kode sequence (numeric) Tagihan untuk "\
             "pilihan customer. Mulai dari '01'"
         )
-    billNo: str = Field(
-            default='', 
+    billNo: Union[str, None] = Field(
+            default=None,
             description='Nomor (numeric (?)) Tagihan Customer', 
             max_length=18
         )
-    billName: str = Field(
-            default='', max_length=20,
+    billName: Union[str, None] = Field(
+            default=None,
+            max_length=20,
             # FIXME: contoh di dokumen SNAP 'Bill A for Jan'
             description='Bill Name'
         )
     billDescription: Union[BillDescription, None] = Field(
+            default=None,
             description='Deskripsi Tagihan singkat dua bahasa.'
         )
     billAmount: Union[BillAmount, None] = Field(description='Nominal Tagihan')
