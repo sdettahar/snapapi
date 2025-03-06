@@ -1,0 +1,17 @@
+[Unit]
+Description=SNAP-API
+After=network.target
+
+[Service]
+Type=idle
+SyslogIdentifier=snapapi
+User=ubuntu
+Group=ubuntu
+WorkingDirectory=/home/ubuntu/app/snapapi
+ExecStart=/home/ubuntu/.pyenv/shims/gunicorn -c /home/ubuntu/app/snapapi/.gunicorn.py app:demo
+Restart=on-failure
+RestartSec=3s
+StartLimitBurst=10
+
+[Install]
+WantedBy=multi-user.target

@@ -1,0 +1,15 @@
+*.pyc
+__pycache__
+.DS_Store
+*~
+.~lock*
+*.sublime-workspace
+*.sublime-project
+*.afphoto
+*.vscode
+.python-version
+.pdm-python
+.mypy_cache
+.gunicorn*
+dist/
+src/

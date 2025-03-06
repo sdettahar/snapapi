@@ -1,0 +1,38 @@
+; -*- coding: utf-8 -*-
+; SNAP-API: snap.conf sample
+; Simpan di dalam folder ~/.snapapi
+; written by: S Deta Harvianto <sdetta@gmail.com>
+
+[snapapi]
+; enum; 'memory', 'memcached', 'redis'
+cache = memory
+
+; hanya diisi jika cache = redis
+#redis_host = localhost
+#redis_port = 6379
+#redis_db = 8
+
+; hanya diisi jika cache = memcached
+#memcached_host = localhost
+#memcached_port = 11211
+
+; per app setting
+[demo]
+#namespace = demo
+#client_id = 
+#client_secret = 
+
+; silakan buat passphrase untuk Access Token
+; NOTE: bedakan dengan client_secret yang dikirimkan ke Mitra 
+; ```python
+;
+; import secrets
+; secrets.token_urlsafe(32)
+;
+; ```
+#token_passphrase = 
+
+; OAuth2 Signature Algorithm, default 'SHA256withRSA'
+#oauth2_signature_algorithm = SHA256withRSA
+; Transaction Signature Algorithm, default 'HMAC-SHA512'
+#transaction_signature_algorithm = HMAC-SHA512

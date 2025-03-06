@@ -1,0 +1,6 @@
+workers = 2
+errorlog = '-'
+bind = 'unix:/tmp/snapapi.sock'
+loglevel = 'info'
+max_requests = 1024
+worker_class = 'uvicorn.workers.UvicornWorker'
