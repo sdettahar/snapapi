@@ -8,15 +8,16 @@ _logger = logging.getLogger(__name__)
 _logger.addHandler(logging.StreamHandler(sys.stdout))
 
 from collections import defaultdict
-from typing import Callable, Coroutine, Any, Optional
+from typing import Callable, Coroutine, Any, Optional, Union
 from datetime import datetime, timezone, tzinfo
 
 from fastapi.routing import APIRoute
 from fastapi.exceptions import ValidationException
 from starlette.requests import Request
-from starlette.responses import Response
+from starlette.responses import Response as StarletteResponse
 
-from snapapi import exceptions, codes, SNAPResponse
+from snapapi import exceptions, codes
+from snapapi.responses import SNAPResponse
 
 
 class SNAPRoute(APIRoute):
@@ -25,26 +26,29 @@ class SNAPRoute(APIRoute):
         super().__init__(*args, **kwargs)
         self.namespace = None
         self.service_code = None
+        self.logger = None
 
     def get_route_handler(self)->Callable[
-            [Request], Coroutine[Any, Any, Response]
+            [Request], Coroutine[Any, Any, StarletteResponse]
         ]:
         """ Parse ValidationException yang sesuai OpenAPI ke SNAP """
         route_handler = super().get_route_handler()
-        async def error_handler(request: Request) -> Response:
+        async def process_route(request: Request) -> StarletteResponse:
             # add x_request_datetime di request.state
             # DI SAAT Request diterima oleh API
             tz: Optional[tzinfo] = datetime.now().astimezone().tzinfo
             request_timestamp: str = datetime.now(tz)\
                                 .isoformat(timespec="milliseconds")
             request.state.x_request_datetime = request_timestamp
-            response: Response
+            response: Optional[Union[SNAPResponse, StarletteResponse]]
+            exception: str = ''
             try:
                 response = await route_handler(request)
             # re-raise
             except exceptions.JSONException:
                 raise
             except Exception as exc:
+                exception = str(sys.exc_info())
                 if isinstance(exc, ValidationException):
                     error = await parse(
                             exc=exc, 
@@ -86,8 +90,15 @@ class SNAPRoute(APIRoute):
                     'cache-control': 'no-store'
                 })
             # TODO: Logger
+            if self.logger:
+                await self.logger.send(
+                        request=request,
+                        response=response,
+                        exception=exception
+                    )
             return response
-        return error_handler
+        return process_route
+
 
 async def parse(
         exc: ValidationException,
@@ -156,8 +167,8 @@ async def parse(
         else:
             status_code = codes.STATUS_CODE_500
             error = exceptions.ErrorMessage(
-                    status_code=status_code, 
-                    service_code=codes.SERVICE_CODE_GENERAL, 
+                    status_code=status_code,
+                    service_code=codes.SERVICE_CODE_GENERAL,
                     case_code=codes.CASE_CODE_00
                 )
     return error

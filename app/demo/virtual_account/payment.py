@@ -11,7 +11,7 @@ from typing_extensions import Annotated
 from asyncer import asyncify
 from fastapi import APIRouter, Header, Request, Depends, Body
 
-from snapapi import SNAPRoute
+from snapapi import SNAPRoute, SNAPLog
 from snapapi.model.virtual_account.payment import (
         PaymentHeader,
         PaymentRequest,
@@ -21,7 +21,7 @@ from snapapi.model.virtual_account.payment import (
     )
 from snapapi.codes import SERVICE_CODE_VIRTUAL_ACCOUNT_PAYMENT
 from snapapi.security.oauth2 import Oauth2ClientCredentials
-from app.demo.setting import Cache, Crypto
+from app.demo.setting import Cache, Crypto, NAMESPACE
 from app.demo.billing import BillDemo
 Bill = BillDemo(service_code=SERVICE_CODE_VIRTUAL_ACCOUNT_PAYMENT)
 
@@ -29,7 +29,14 @@ Bill = BillDemo(service_code=SERVICE_CODE_VIRTUAL_ACCOUNT_PAYMENT)
 class VAPaymentOAuth2(SNAPRoute):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
+        self.namespace = NAMESPACE
         self.service_code = SERVICE_CODE_VIRTUAL_ACCOUNT_PAYMENT
+        self.logger = SNAPLog(
+                namespace=NAMESPACE, 
+                service_code=SERVICE_CODE_VIRTUAL_ACCOUNT_PAYMENT,
+                # add method to send log here
+                backend=None
+            )
 
 router = APIRouter(route_class=VAPaymentOAuth2)
 oauth2_scheme = Oauth2ClientCredentials(

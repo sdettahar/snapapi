@@ -10,3 +10,4 @@ from .routing import SNAPRoute as SNAPRoute
 from .exceptions import JSONException as JSONException
 from .security.crypto import SNAPCrypto as SNAPCrypto
 from .cache import SNAPCache as SNAPCache
+from .logger import SNAPLog as SNAPLog

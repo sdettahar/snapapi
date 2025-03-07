@@ -11,7 +11,7 @@ from typing_extensions import Annotated
 from asyncer import asyncify
 from fastapi import APIRouter, Header, Request, Depends, Body
 
-from snapapi import SNAPRoute
+from snapapi import SNAPRoute, SNAPLog
 from snapapi.model.virtual_account.inquiry import (
         InquiryHeader,
         InquiryRequest,
@@ -21,7 +21,7 @@ from snapapi.model.virtual_account.inquiry import (
 from snapapi.codes import SERVICE_CODE_VIRTUAL_ACCOUNT_INQUIRY
 from snapapi.security.oauth2 import Oauth2ClientCredentials
 
-from app.demo.setting import Cache, Crypto
+from app.demo.setting import Cache, Crypto, NAMESPACE
 from app.demo.billing import BillDemo
 Bill = BillDemo(service_code=SERVICE_CODE_VIRTUAL_ACCOUNT_INQUIRY)
 
@@ -29,7 +29,14 @@ Bill = BillDemo(service_code=SERVICE_CODE_VIRTUAL_ACCOUNT_INQUIRY)
 class VAInquiryOAuth2(SNAPRoute):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
+        self.namespace = NAMESPACE
         self.service_code = SERVICE_CODE_VIRTUAL_ACCOUNT_INQUIRY
+        self.logger = SNAPLog(
+                namespace=NAMESPACE, 
+                service_code=SERVICE_CODE_VIRTUAL_ACCOUNT_INQUIRY,
+                # add method to send log here
+                backend=None
+            )
 
 router = APIRouter(route_class=VAInquiryOAuth2)
 oauth2_scheme = Oauth2ClientCredentials(

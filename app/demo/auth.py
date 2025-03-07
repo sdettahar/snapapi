@@ -11,7 +11,7 @@ from typing_extensions import Annotated
 from asyncer import asyncify
 from fastapi import APIRouter, Header, Request
 
-from snapapi import SNAPRoute
+from snapapi import SNAPRoute, SNAPLog
 from snapapi.model.oauth2 import (
         Oauth2Request, 
         Oauth2Response, 
@@ -19,12 +19,19 @@ from snapapi.model.oauth2 import (
     )
 from snapapi.codes import SERVICE_CODE_OAUTH2
 from app.setting import TOKEN_EXPIRE
-from app.demo.setting import Crypto
+from app.demo.setting import Crypto, NAMESPACE
 
 class SNAPOAuth2(SNAPRoute):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
+        self.namespace = NAMESPACE
         self.service_code = SERVICE_CODE_OAUTH2
+        self.logger = SNAPLog(
+                namespace=NAMESPACE, 
+                service_code=SERVICE_CODE_OAUTH2,
+                # add method to send log here
+                backend=None
+            )
 
 router = APIRouter(route_class=SNAPOAuth2)
 
