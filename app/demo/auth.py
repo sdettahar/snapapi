@@ -20,6 +20,7 @@ from snapapi.model.oauth2 import (
 from snapapi.codes import SERVICE_CODE_OAUTH2
 from app.setting import TOKEN_EXPIRE
 from app.demo.setting import Crypto, NAMESPACE
+from app.demo.backend import logger
 
 class SNAPOAuth2(SNAPRoute):
     def __init__(self, *args, **kwargs):
@@ -29,8 +30,7 @@ class SNAPOAuth2(SNAPRoute):
         self.logger = SNAPLog(
                 namespace=NAMESPACE, 
                 service_code=SERVICE_CODE_OAUTH2,
-                # add method to send log here
-                backend=None
+                backend=logger
             )
 
 router = APIRouter(route_class=SNAPOAuth2)

@@ -23,6 +23,7 @@ from snapapi.codes import SERVICE_CODE_VIRTUAL_ACCOUNT_PAYMENT
 from snapapi.security.oauth2 import Oauth2ClientCredentials
 from app.demo.setting import Cache, Crypto, NAMESPACE
 from app.demo.billing import BillDemo
+from app.demo.backend import logger
 Bill = BillDemo(service_code=SERVICE_CODE_VIRTUAL_ACCOUNT_PAYMENT)
 
 
@@ -34,8 +35,7 @@ class VAPaymentOAuth2(SNAPRoute):
         self.logger = SNAPLog(
                 namespace=NAMESPACE, 
                 service_code=SERVICE_CODE_VIRTUAL_ACCOUNT_PAYMENT,
-                # add method to send log here
-                backend=None
+                backend=logger
             )
 
 router = APIRouter(route_class=VAPaymentOAuth2)

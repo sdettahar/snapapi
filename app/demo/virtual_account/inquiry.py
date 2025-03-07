@@ -20,9 +20,9 @@ from snapapi.model.virtual_account.inquiry import (
     )
 from snapapi.codes import SERVICE_CODE_VIRTUAL_ACCOUNT_INQUIRY
 from snapapi.security.oauth2 import Oauth2ClientCredentials
-
 from app.demo.setting import Cache, Crypto, NAMESPACE
 from app.demo.billing import BillDemo
+from app.demo.backend import logger
 Bill = BillDemo(service_code=SERVICE_CODE_VIRTUAL_ACCOUNT_INQUIRY)
 
 
@@ -34,8 +34,7 @@ class VAInquiryOAuth2(SNAPRoute):
         self.logger = SNAPLog(
                 namespace=NAMESPACE, 
                 service_code=SERVICE_CODE_VIRTUAL_ACCOUNT_INQUIRY,
-                # add method to send log here
-                backend=None
+                backend=logger
             )
 
 router = APIRouter(route_class=VAInquiryOAuth2)

@@ -2,7 +2,6 @@
 # SNAP-API Logger
 # Author: S Deta Harvianto <sdetta@gmail.com>
 
-from asyncer import asyncify
 from typing import Union, Dict, Any, Callable, Awaitable
 from fastapi import Request
 from ulid import monotonic as ulid
@@ -85,7 +84,4 @@ class SNAPLog:
                 exception=exception
             )
         if self.backend:
-            if not isinstance(self.backend, Awaitable):
-                asyncify(self.backend)(log)
-            else:
-                self.backend(log)
+            await self.backend(log)
