@@ -6,7 +6,7 @@ import re
 from typing import List
 from snapapi.exceptions import (
         BillNotFound,
-        BillInvalidAmount,
+        InvalidAmount,
         BillPaid,
         BillExpired,
         VirtualAccountNotFound
@@ -85,7 +85,7 @@ class BillDemo:
         bill = await self._check(bill=result and result[0] or {})
         # DEMO: Closed Bill only
         if payment_amount != bill['totalAmount']:
-            raise BillInvalidAmount()
+            raise InvalidAmount()
         return await self._parse_to_snap(bill)
 
     async def _check(self, bill: dict) -> dict:

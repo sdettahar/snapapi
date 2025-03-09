@@ -2,12 +2,11 @@
 # SNAP-API: init
 # Author: S Deta Harvianto <sdetta@gmail.com>
 
-__version__ = "0.1.4"
+__version__ = "0.1.6"
 
 from .applications import SNAPAPI as SNAPAPI
 from .responses import SNAPResponse as SNAPResponse
 from .routing import SNAPRoute as SNAPRoute
-from .exceptions import JSONException as JSONException
 from .security.crypto import SNAPCrypto as SNAPCrypto
 from .cache import SNAPCache as SNAPCache
 from .logger import SNAPLog as SNAPLog

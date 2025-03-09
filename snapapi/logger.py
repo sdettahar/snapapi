@@ -6,7 +6,6 @@ from typing import Union, Dict, Any, Callable, Awaitable
 from fastapi import Request
 from ulid import monotonic as ulid
 from datetime import datetime
-from starlette.responses import Response as StarletteResponse
 
 from snapapi.responses import SNAPResponse
 
@@ -24,7 +23,7 @@ class SNAPLog:
             *, 
             namespace: Union[str, None] = None,
             service_code: Union[str, None] = None,  
-            backend: Union[Callable[[Any], Dict[str, Any]], None] = None
+            backend: Union[Callable[[Any], Awaitable[Any]], None] = None
         ) -> None:
         self.namespace = namespace
         self.service_code = service_code
@@ -34,8 +33,8 @@ class SNAPLog:
             self,
             *,
             request: Request,
-            response: Union[SNAPResponse, StarletteResponse],
-            exception: str = ''
+            response: SNAPResponse,
+            traceback: str = ''
         ) -> None:
         """ Build log if request and response are presented """
 
@@ -50,13 +49,18 @@ class SNAPLog:
         request_url: str = str(request.url)
         request_datetime: str = request.state.x_request_datetime
         request_headers: dict = dict(request.headers)
-        request_body: Union[bytes, str] = await request.body()
+        request_body: str = (await request.body()).decode()
 
         # Response
         status_code: int = response.status_code
         response_datetime: str = response.headers['x-timestamp']
         response_headers = dict(response.headers)
-        response_body: Union[bytes, str] = response.body
+        response_body: str
+        if isinstance(response.body, memoryview):
+            response_body = response.body.tobytes().decode()
+        else:
+            response_body = response.body.decode()
+
         response_time: float = round((
                 datetime.fromisoformat(response_datetime) \
                 - datetime.fromisoformat(request_datetime)
@@ -81,7 +85,7 @@ class SNAPLog:
                         response_headers=response_headers,
                         response_body=response_body
                     ),
-                exception=exception
+                traceback=traceback
             )
         if self.backend:
             await self.backend(log)

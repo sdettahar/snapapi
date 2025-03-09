@@ -12,11 +12,11 @@ except ModuleNotFoundError:
 from datetime import datetime, timezone, tzinfo
 from typing import Optional, Any, Mapping
 
-from starlette.responses import Response as StarletteResponse
+from starlette.responses import JSONResponse
 from starlette.background import BackgroundTask
 
 
-class SNAPResponse(StarletteResponse):
+class SNAPResponse(JSONResponse):
     """ 
     Add X-Timestamp di setiap Response 
 

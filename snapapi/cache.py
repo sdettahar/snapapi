@@ -24,7 +24,6 @@ from snapapi.tools import parse_headers
 from snapapi.codes import STATUS_CODE_409, STATUS_CODE_500, STATUS_CODE_504
 
 AppType = TypeVar("AppType", bound="SNAPCache")
-BACKEND = Literal['memory', 'memcached', 'redis']
 
 
 class SNAPCache:
@@ -51,7 +50,7 @@ class SNAPCache:
             port: Union[int, None] = None,
             db: Union[int, None] = None,
             timeout: Union[int, None] = 9,
-            backend: Union[BACKEND, None] = None
+            backend: Union[str, None] = None
         ) -> None:
         self._namespace = namespace
         self._host = host
@@ -107,11 +106,11 @@ class SNAPCache:
         self.initiate_cache()
     
     @property
-    def backend(self) -> Union[BACKEND, None]:
+    def backend(self) -> Union[str, None]:
         return self._backend
 
     @backend.setter
-    def backend(self, value: Union[BACKEND, None]) -> None:
+    def backend(self, value: Union[str, None]) -> None:
         self._backend = value
         self.initiate_cache()
 

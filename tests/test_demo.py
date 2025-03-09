@@ -119,10 +119,10 @@ def create_certificate(namespace: str) -> None:
 
 
 
-VIRTUAL_ACCOUNT = '1234506000009587' # open
+# VIRTUAL_ACCOUNT = '1234506000009587' # open
 # VIRTUAL_ACCOUNT = '1234505000001234' # paid
 # VIRTUAL_ACCOUNT = '1234505000005678' # expired
-# VIRTUAL_ACCOUNT = '1234505000008984' # no bill
+VIRTUAL_ACCOUNT = '1234505000008984' # no bill
 # VIRTUAL_ACCOUNT = '1234505000118984' # no VA
 PAID_AMOUNT = 103500.0
 timing = []
@@ -158,20 +158,20 @@ def get_access_token(host: str)->requests.Response:
 # -----------------------------------------------------------------------------
 # INQUIRY
 # -----------------------------------------------------------------------------
-# SAMPLE_REQUEST_BODY = None
-SAMPLE_REQUEST_BODY = {
-    "partnerServiceId":"12345",
-    "trxDateInit":"2025-03-06T14:45:00+07:00",
-    "sourceBankCode":"002",
-    "additionalInfo":{
-        "idApp":"63bee7b6-3291-4e1c-9949-03c6e3af416b"
-    },
-    "passApp":"TEST",
-    "customerNo":"06000009587",
-    "virtualAccountNo":"1234506000009587",
-    "inquiryRequestId":"5b2a065a-c9b1-410e-a23e-6736d82e00b8",
-    "channelCode":1
-    }
+SAMPLE_REQUEST_BODY = None
+# SAMPLE_REQUEST_BODY = {
+#     "partnerServiceId":"12345",
+#     "trxDateInit":"2025-03-06T14:45:00+07:00",
+#     "sourceBankCode":"002",
+#     "additionalInfo":{
+#         "idApp":"63bee7b6-3291-4e1c-9949-03c6e3af416b"
+#     },
+#     "passApp":"TEST",
+#     "customerNo":"06000009587",
+#     "virtualAccountNo":"1234506000009587",
+#     "inquiryRequestId":"5b2a065a-c9b1-410e-a23e-6736d82e00b8",
+#     "channelCode":1
+#     }
 def inquiry(host: str):
     access_token_response = get_access_token(host)
     if access_token_response.status_code!=200:
@@ -300,38 +300,48 @@ def payment(host: str, amount: float):
 
 
 if __name__ == '__main__':
-    parser = argparse.ArgumentParser(add_help=False)
+    parser = argparse.ArgumentParser()
     parser.add_argument("action", 
             nargs="?", 
             default="token", 
             help="token, inquiry, payment"
         )
-    parser.add_argument("-h", "--host", 
+    parser.add_argument("--host", 
             default='http://localhost:8000', 
             help="Hostname, default 'localhost'"
         )
     parser.add_argument("-a", "--amount", help="Payment Amount")
+    parser.add_argument("-n", "--namespace", 
+            default='demo',
+            help="""Digunakan untuk membuat Certificate, cth: 'demo'"""
+        )
     args = parser.parse_args()
     host = args.host
     amount = args.amount and float(args.amount) or PAID_AMOUNT
+    namespace = args.namespace
     action = args.action
+    response = None
+
     if action == 'token':
         response = get_access_token(host)
     elif action == 'inquiry':
         response = inquiry(host)
     elif action == 'payment':
         response = payment(host, amount)
+    elif action == 'certificate':
+        create_certificate(namespace)
     else:
-        raise ValueError('Not Implemented')
+        raise NotImplementedError()
 
-    print('Request:')
-    print(to_curl(response.request))
-    print('Response:')
-    print('\n'.join([
-            f'{k.title()}: {v}' for k, v in response.headers.items() 
-        ]))
-    print(json.dumps(response.json(), indent=2))
-    for t in timing:
-        print(t)
+    if response is not None:
+        print('Request:')
+        print(to_curl(response.request))
+        print('Response:')
+        print('\n'.join([
+                f'{k.title()}: {v}' for k, v in response.headers.items() 
+            ]))
+        print(json.dumps(response.json(), indent=2))
+        for t in timing:
+            print(t)
 
 session.close()
