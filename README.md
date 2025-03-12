@@ -1,4 +1,4 @@
-# SNAP-API
+# `snapapi`
 Framework/tookit berbasis pydantic dan FastAPI untuk implementasi SNAP (Standar Nasional Open API Pembayaran) Indonesia
 
 
@@ -19,19 +19,19 @@ Iya, masih banyak Transaksi yang harus dibuat Modelnya :)
 ### Dependency
 SNAP-API membutuhkan module sbb:
 1.  `pydantic` https://pydantic.dev  
-    Dasar dari validasi model agar sesuai dengan spesifikasi yang telah ditetapkan oleh Bank Indonesia dan ASPI (Asosiasi Sistem Pembayaran Indonesia)
+    Dasar dari validasi model agar sesuai dengan spesifikasi yang telah ditetapkan oleh Bank Indonesia dan ASPI (Asosiasi Sistem Pembayaran Indonesia). Core validasi menggunakan `rust` sehingga pydantic dikenal sebagai model validator tercepat di python.
 
 2.  `pycryptodome` https://www.pycryptodome.org  
-    Digunakan untuk membuat dan meverifikasi Asymmetric Signature dengan algorithma SHA256withRSA
+    Digunakan untuk membuat dan meverifikasi Asymmetric Signature dengan algorithma SHA256withRSA.
 
 3.  `PyJWT` https://pyjwt.readthedocs.io/en/latest  
-    Dibutuhkan untuk membuat dan meverifikasi Access Token berbasis JWT
+    Dibutuhkan untuk membuat dan meverifikasi Access Token berbasis JWT.
 
 4.  `fastapi` https://fastapi.tiangolo.com  
-    Lighweight and fast framework API berdasarkan OpenAPI
+    Lighweight and fast framework API berdasarkan OpenAPI.
 
 5.  `asyncer` https://asyncer.tiangolo.com  
-    Thin layer module di atas `anyio` agar membuat sync method (spt `class Crypto`) menjadi async
+    Thin layer module yang membuat sync method (spt `class Crypto`) menjadi async. Dengan module, dijamin end-to-end API menjadi full async.
 
 
 ### Optional
@@ -39,7 +39,7 @@ SNAP-API membutuhkan module sbb:
     ASGI web server
 
 2.  `aiocache` https://aiocache.aio-libs.org/en/latest  
-    Digunakan untuk cache key X-External-Id pada API Transaksi. Backend untuk store keys bisa dipilih antara `memcached`, `redis` atau `memory`
+    Digunakan untuk cache keys pada API Transaksi. Backend untuk store keys bisa dipilih antara `memcached`, `redis` atau `memory` (default)
 
 3.  `orjson` https://github.com/ijl/orjson  
     Pengganti yang lebih baik daripada standar `json`
@@ -54,11 +54,11 @@ $ pip install snapapi
 
 ```
 
-Import `class SNAP-API` kemudian instantiate sama seperti `class FastAPI`, karena `class IDSAP` merupakan subclass dari `class FastAPI`.
+Import `class SNAPAPI` kemudian instantiate sama seperti `class FastAPI` https://fastapi.tiangolo.com/reference/fastapi/?h=class+fastapi#fastapi.FastAPI
 
 ```python
 
-app = SNAP-API(
+app = SNAPAPI(
         title='SNAP-API Demo',
         version="0.1.1",
         description="""
@@ -84,4 +84,3 @@ Fokus pengembangan module ini adalah:
 1.  Mengikuti perkembangan SNAP supaya compliance setiap kali ada versi terbaru.
 2.  Implementasi Model lain agar sesuai dengan dokumentasi SNAP, terutama melengkapi fitur Virtual Account.
 3.  Refactoring fitur yang sudah ada supaya lebih ringan, tidak terlalu banyak dependency, dan mudah digunakan.
-4.  Tambah fitur seperti Logger (agar compliance dengan SNAP), API untuk Backend, dll.

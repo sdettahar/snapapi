@@ -20,8 +20,10 @@ from snapapi import tools
 from snapapi.exceptions import (
         AccessDenied,
         InvalidSignature,
-        AccessTokenNotFound,
-        AccessTokenInvalid
+        TokenNotFoundB2B,
+        TokenNotFoundB2C,
+        InvalidTokenB2B,
+        InvalidTokenB2C
     )
 
 AppType = TypeVar("AppType", bound="SNAPCrypto")
@@ -101,7 +103,7 @@ class SNAPCrypto:
         
         b. Memverifikasi Acccess Token dari Partner.
            Jika invalid/not found maka akan 
-           raise AccessTokenInvalid atau AccessTokenNotFound.
+           raise InvalidTokenB2B/InvalidTokenB2C.
             
             ```python
             
@@ -547,21 +549,29 @@ class SNAPCrypto:
     def verify_access_token(
             self,
             access_token: str,
-            /
+            service_class: Optional[Literal['b2b', 'b2c']] = 'b2b'
         ) -> None:
         """ 
         Verify JWT access_token
 
         Raises:
-        - AccessTokenInvalid: Access Token Invalid -> CASE_CODE_01
-        - AccessTokenNotFound: Access Token Not Found -> CASE_CODE_03
+        - InvalidTokenB2B: Access Token Invalid (B2B)
+        - InvalidTokenB2C: Access Token Invalid (B2C)
+        - TokenNotFoundB2B: empty string access_token (B2B)
+        - TokenNotFoundB2C: empty string access_token (B2C)
         """
         try:
             assert access_token
             _ = jwt.decode(access_token, self.token_passphrase, 
                 algorithms=['HS512'])
         except AssertionError:
-            raise AccessTokenNotFound()
+            if service_class == 'b2b':
+                raise TokenNotFoundB2B()
+            else:
+                raise TokenNotFoundB2C()
         except Exception as exc:
-            raise AccessTokenInvalid()
+            if service_class == 'b2b':
+                raise InvalidTokenB2B()
+            else:
+                raise InvalidTokenB2C()
         return None

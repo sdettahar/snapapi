@@ -18,6 +18,7 @@ from datetime import datetime, timezone
 from timeit import default_timer as timer
 from shlex import quote
 from Crypto.PublicKey import RSA
+from typing import Optional
 
 from snapapi.security.crypto import SNAPCrypto
 
@@ -65,27 +66,28 @@ Crypto = SNAPCrypto(
 
 
 def to_curl(request: requests.PreparedRequest) -> str:
-    """ Taken from https://github.com/ofw/curlify """
-    parts = [('curl', None), ('-X', request.method)]
-    parts += [('', f'{request.url}\n')]
-
+    """ 
+    Taken from https://github.com/ritajie/requests_to_curl/blob/master/requests_to_curl/requests_to_curl.py 
+    """
+    parts = [("curl", None), ("-X", request.method)]
     for k, v in sorted(request.headers.items()):
-        parts += [('-H', '{0}: {1}\n'.format(k, v))]
-
+        parts += [("-H", "{0}: {1}".format(k, v))]
     if request.body:
         body = request.body
         if isinstance(body, bytes):
-            body = body.decode('utf-8')
-        body = json.dumps(json.loads(body), indent=2)
-        parts += [('-d', body)]
-
+            body = body.decode("utf-8")
+        parts += [("-d", body)]
+    
+    parts += [('', request.url)]
     flat_parts = []
-    for a, b in parts:
-        if a:
-            flat_parts.append(quote(a))
-        if b:
-            flat_parts.append(quote(b))
-    return ' '.join(flat_parts)
+    key: Optional[str]
+    val: Optional[str]
+    for key, val in parts:
+        if key:
+            flat_parts.append(quote(key))
+        if val:
+            flat_parts.append(quote(val))
+    return " ".join(flat_parts)
 
 
 def create_certificate(namespace: str) -> None:
@@ -119,10 +121,10 @@ def create_certificate(namespace: str) -> None:
 
 
 
-# VIRTUAL_ACCOUNT = '1234506000009587' # open
+VIRTUAL_ACCOUNT = '1234506000009587' # open
 # VIRTUAL_ACCOUNT = '1234505000001234' # paid
 # VIRTUAL_ACCOUNT = '1234505000005678' # expired
-VIRTUAL_ACCOUNT = '1234505000008984' # no bill
+# VIRTUAL_ACCOUNT = '1234505000008984' # no bill
 # VIRTUAL_ACCOUNT = '1234505000118984' # no VA
 PAID_AMOUNT = 103500.0
 timing = []

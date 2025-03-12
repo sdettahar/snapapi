@@ -22,24 +22,18 @@ CLIENT_SECRET = config_demo['client_secret']
 TOKEN_PASSPHRASE = config_demo['token_passphrase']
 
 # Hanya Flow API -> Bank yang punya Private Key
-try:
-    private_key_file = CONFIG_PATH / f'{NAMESPACE}.key.pem'
-    with open(private_key_file, 'rb') as private_key:
-        PRIVATE_KEY = private_key.read()
-    if oct(private_key_file.stat().st_mode)[-3:] != '600':
-        raise SystemError(f"{private_key_file} permission harus diset 600")
-except FileNotFoundError:
-    PRIVATE_KEY = b''
+# private_key_file = CONFIG_PATH / f'{NAMESPACE}.key.pem'
+# with open(private_key_file, 'rb') as private_key:
+#     PRIVATE_KEY = private_key.read()
+# if oct(private_key_file.stat().st_mode)[-3:] != '600':
+#     raise SystemError(f"{private_key_file} permission harus diset 600")
 
 # Apapun flownya, Public Cert harusnya selalu ada
-try:
-    public_cert_file = CONFIG_PATH / f'{NAMESPACE}.cert.pem'
-    with open(public_cert_file, 'rb') as public_cert:
-        PUBLIC_CERT = public_cert.read()
-    if oct(public_cert_file.stat().st_mode)[-3:] != '600':
-        raise SystemError(f"{public_cert_file} permission harus diset 600")
-except FileNotFoundError:
-    PUBLIC_CERT = b''
+public_cert_file = CONFIG_PATH / f'{NAMESPACE}.cert.pem'
+with open(public_cert_file, 'rb') as public_cert:
+    PUBLIC_CERT = public_cert.read()
+if oct(public_cert_file.stat().st_mode)[-3:] != '600':
+    raise SystemError(f"{public_cert_file} permission harus diset 600")
 
 
 # Di-instantiate sekali saat loading

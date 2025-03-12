@@ -18,6 +18,8 @@ from snapapi.model.virtual_account.inquiry import (
         InquiryResponseBill,
         InquiryResponseData
     )
+from snapapi.exceptions import TransactionConflict
+from snapapi import tools
 from snapapi.codes import SERVICE_CODE_VIRTUAL_ACCOUNT_INQUIRY
 from snapapi.security.oauth2 import Oauth2ClientCredentials
 from app.demo.setting import Cache, Crypto, NAMESPACE
@@ -103,11 +105,15 @@ async def inquiry(
             request_body = request_body
         )
     
-    #2 Cache
-    await Cache.add(
-            headers=request_headers,
-            service_code=SERVICE_CODE_VIRTUAL_ACCOUNT_INQUIRY
-        )
+    #2 Cache X-External-Id, mencegah duplicate request
+    ttl: int = await tools.count_second_left()
+    try:
+        await Cache.add(
+                key=request_headers['x_external_id'],
+                ttl=ttl
+            )
+    except ValueError:
+        raise TransactionConflict()
     
     #3 Billing
     bill: dict = await Bill.inquiry(account)

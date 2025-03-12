@@ -114,10 +114,8 @@ async def http_exception_handler(
     2.  Error Response sesuai dengan standard SNAP
     """
     if cache and exc.status_code >=500:
-        await cache.delete(
-                headers=dict(request.headers),
-                status_code=exc.status_code
-            )
+        request_headers = dict(request.headers)
+        await cache.delete(key=request_headers['x-external-id'])
     return SNAPResponse(
             status_code=exc.status_code, 
             content=exc.detail,

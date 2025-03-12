@@ -3,7 +3,7 @@
 ### Tes Demo App
 Langkah sebelum mencoba:
 1.  Buat folder `~/.snapapi`
-2.  Buat file konfigurasi `~/.snapapi/snapapi.conf`, dengan spt pada contoh pada `snapapi.conf.sample`
+2.  Buat file konfigurasi `~/.snapapi/snapapi.conf`, dengan spt pada contoh pada `deployment/snapapi.conf.sample`
 3.  Set permission file tsb ke 600
 
 ```shell    

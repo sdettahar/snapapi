@@ -14,13 +14,11 @@ try:
 except ModuleNotFoundError:
     HAS_AIOCACHE = False
 
-from datetime import datetime, timedelta, timezone
 from typing import Callable, TypeVar, Union, Literal, Any, Dict
 from annotated_types import Len
 from typing_extensions import Annotated
 
-from snapapi.exceptions import TransactionConflict, TimeOut
-from snapapi.tools import parse_headers
+from snapapi.exceptions import TimeOut
 from snapapi.codes import STATUS_CODE_409, STATUS_CODE_500, STATUS_CODE_504
 
 AppType = TypeVar("AppType", bound="SNAPCache")
@@ -170,56 +168,38 @@ class SNAPCache:
 
     async def add(
             self,
-            *,
-            headers: Dict[str, str], 
-            service_code: Annotated[str, Len(min_length=2, max_length=2)]
+            key: str,
+            value: Union[Any, None] = None,
+            ttl: Union[int, None] = None
         ) -> None:
-        """ 
-        Cache Request Header X-External-ID -> mencegah duplikasi request
-        """
+        """ Cache Key and Value """
         if not self.cache:
             return None
-        
-        assert service_code, "'service_code' harus diisi"
-        assert len(service_code) == 2, 'Length service_code harus 2 digit'
-        async def _count_second_left()->int:
-            """ 
-            Hitung detik yang tersisa hari ini, sesuai dengan timezone local
-            """
-            now: datetime = datetime.now()
-            midnight: datetime = (now + timedelta(days=1)).replace(
-                                        hour=0, 
-                                        minute=0, 
-                                        second=0, 
-                                        microsecond=0
-                                    )
-            return (midnight - now).seconds
-
-        headers = parse_headers(headers)
-        # X-EXTERNAL-ID exist -> 'Conflict Duplicate X-External-ID'
         try:
-            key = headers['x-external-id']
-            ttl: int = await _count_second_left()
-            await self.cache.add(key=key, value=None, ttl=ttl)
+            await self.cache.add(key=key, value=value, ttl=ttl)
         except asyncio.TimeoutError:
             raise TimeOut()
-        except ValueError:
-            raise TransactionConflict()
-        except Exception as exc:
-            raise exc
+        finally:
+            await self.cache.close()
 
-    async def delete(
-            self,
-            headers: Dict[str, str], 
-            status_code: int
-        ) -> None:
-        """ Clear key X-External-Id di Cache jika terjadi error 5xx """
+    async def delete(self, key: str) -> None:
+        """ Delete Key """
         if not self.cache:
             return None
-        headers = parse_headers(headers)
         try:
-            assert status_code >= STATUS_CODE_500
-            key = headers['x-external-id']
             await self.cache.delete(key)
         except:
             pass
+        finally:
+            await self.cache.close()
+
+    async def exists(self, key: str) -> bool:
+        if not self.cache:
+            return False
+        try:
+            res = await self.cache.exists(key)
+            return res and True or False
+        except asyncio.TimeoutError:
+            raise TimeOut()
+        finally:
+            await self.cache.close()

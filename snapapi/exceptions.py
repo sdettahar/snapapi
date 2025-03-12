@@ -85,28 +85,48 @@ class AccessDenied(AccessError):
     additional_message = 'Access Denied'
 
 
-class AccessTokenNotFound(AccessError):
-    """
-    responseCode: 401xx00
-    responseMessage: 'Unauthorized Access Token Not Found'
-    """
-    additional_message = 'Access Token Not Found'
-
-
-class AccessTokenInvalid(AccessError):
-    """
-    responseCode: 401xx00
-    responseMessage: 'Unauthorized Access Token Invalid'
-    """
-    additional_message = 'Access Token Invalid'
-
-
 class InvalidSignature(AccessError):
     """
     responseCode: 401xx00
     responseMessage: 'Unauthorized Invalid Signature'
     """
-    additional_message = 'Invalid Signature'
+    additional_message = 'Signature'
+
+
+class InvalidTokenB2B(AccessError):
+    """
+    responseCode: 401xx01
+    responseMessage: 'Invalid Token (B2B)'
+    """
+    case_code = codes.CASE_CODE_01
+    message = 'Invalid Token (B2B)'
+
+
+class InvalidTokenB2C(AccessError):
+    """
+    responseCode: 401xx02
+    responseMessage: 'Invalid Customer Token'
+    """
+    case_code = codes.CASE_CODE_02
+    message = 'Invalid Customer Token'
+
+
+class TokenNotFoundB2B(AccessError):
+    """
+    responseCode: 401xx03
+    responseMessage: 'Token Not Found (B2B)'
+    """
+    case_code = codes.CASE_CODE_03
+    message = 'Token Not Found (B2B)'
+
+
+class TokenNotFoundB2C(AccessError):
+    """
+    responseCode: 401xx04
+    responseMessage: 'Customer Token Not Found'
+    """
+    case_code = codes.CASE_CODE_04
+    message = 'Customer Token Not Found'
 
 
 ## 403
@@ -131,16 +151,16 @@ class TransactionInvalid(SNAPException):
 
 class AccountNotFound(TransactionInvalid):
     """
-    responseCode: 404xx12
+    responseCode: 404xx11
     responseMessage: 'Account Not Found'
     """
-    case_code = codes.CASE_CODE_12
+    case_code = codes.CASE_CODE_11
     message = 'Account Not Found'
 
 
-class VirtualAccountNotFound(TransactionInvalid):
+class VirtualAccountNotFound(AccountNotFound):
     """
-    responseCode: 404xx12
+    responseCode: 404xx11
     responseMessage: 'Virtual Account Not Found'
     """
     message = 'Virtual Account Not Found'
@@ -171,6 +191,15 @@ class BillPaid(TransactionInvalid):
     """
     case_code = codes.CASE_CODE_14
     message = 'Bill is Paid'
+
+
+class InconsistentRequest(TransactionInvalid):
+    """
+    responseCode: 404xx18
+    responseMessage: 'Inconsistent Request'
+    """
+    case_code = codes.CASE_CODE_18
+    message = 'Inconsistent Request'
 
 
 class BillExpired(TransactionInvalid):
