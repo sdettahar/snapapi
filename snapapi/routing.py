@@ -47,10 +47,7 @@ class SNAPRoute(APIRoute):
                 response = await route_handler(request)
             except Exception as exc:
                 if isinstance(exc, ValidationException):
-                    error = await exceptions.parse_validation_exception(
-                            exc=exc, 
-                            service_code=self.service_code
-                        )
+                    error = await exceptions.parse_validation_exception(exc)
                     message = error.message
                     additional_message = error.additional_message
                     status_code = error.status_code

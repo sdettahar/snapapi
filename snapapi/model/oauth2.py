@@ -15,6 +15,17 @@ class Oauth2HeaderRequest(CommonHeader):
             description='Asymetric Signature SHA256withRSA (PKCS#1 v1.5)'
         )
 
+class Oauth2Request(BaseModel):
+    """ Request Model """
+    grantType: Literal['client_credentials'] = Field(
+            default='client_credentials',
+            description="Selalu `client_credentials`"
+        )
+    additionalInfo: Union[Dict[str, Any], None] = Field(
+            default=None, 
+            description='Informasi tambahan'
+        )
+
 class Oauth2Response(BaseModel):
     responseCode: str = Field(default='2007300')
     responseMessage: str = Field(default='Successful')
@@ -26,13 +37,4 @@ class Oauth2Response(BaseModel):
     expiresIn: str = Field(
             default=f"899",
             description='Access Token expiration dalam detik'
-        )
-    
-
-class Oauth2Request(BaseModel):
-    """ Request Model """
-    grantType: Literal['client_credentials']
-    additionalInfo: Union[Dict[str, Any], None] = Field(
-            default=None, 
-            description='Informasi tambahan'
         )

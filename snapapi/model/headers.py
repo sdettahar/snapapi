@@ -35,7 +35,7 @@ class CommonHeader(BaseModel):
 class TransactionHeader(CommonHeader):
     x_signature: str = Field(description='Symmetric Signature HMAC-SHA512')
     x_external_id: str = Field(
-            description='Unique ID per request dalam 1 hari', 
-            min_length=5,
-            max_length=36
-        )
+        description='Unique ID per request dalam 1 hari', 
+        min_length=5,
+        max_length=36
+    )

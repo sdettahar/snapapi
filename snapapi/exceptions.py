@@ -260,10 +260,7 @@ class TimeOut(SNAPException):
     message = 'Time Out'
 
 
-async def parse_validation_exception(
-        exc: ValidationException,
-        service_code: str
-    ) -> SNAPException:
+async def parse_validation_exception(exc: ValidationException) -> SNAPException:
     """ Parse Error. SNAP bedakan antara missing field dan format value """
     status_code = codes.STATUS_CODE_400
     tmp = defaultdict(list)
@@ -307,6 +304,6 @@ async def parse_validation_exception(
         # format field value salah
         elif error_values:
             return InvalidFieldFormat(f"[{', '.join(error_values)}]")
-        # other, General Error
+        # other
         else:
-            return ServerError()
+            return BadRequest()
