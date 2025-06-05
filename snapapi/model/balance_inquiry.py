@@ -13,7 +13,17 @@ from typing_extensions import Self
 from snapapi.model.headers import TransactionHeader
 from snapapi.model.bill import BillAmount as Amount
 
-STATUS = Literal['0001', '0002', '0003', '0004', '0006', '0007', '0009']
+STATUS = Literal[
+    '0001', 
+    '0002', 
+    '0003', 
+    '0004', 
+    '0005', 
+    '0006', 
+    '0007', 
+    '0008', 
+    '0009'
+]
 
 class BalanceInquiryHeader(TransactionHeader):
     x_partner_id: str = Field(
@@ -138,7 +148,4 @@ class BalanceInquiryResponse(BalanceInquiryCommon):
         description="Customer Account Name",
         max_length=140
     )
-    accountInfos: Optional[List[BalanceInquiryAccountInfo]] = Field(
-        default=None,
-        description=""
-    )
+    accountInfos: Optional[List[BalanceInquiryAccountInfo]] = None

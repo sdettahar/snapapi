@@ -186,7 +186,7 @@ class BankStatementResponse(BankStatementCommon):
         description='ISO 8601 datetime string until seconds with TZD',
         max_length=25
     )
-    detailData: List[BankStatementDetailData]
+    detailData: Optional[List[BankStatementDetailData]] = None
     additionalInfo: Optional[Dict[str, Any]] = Field(
         default=None,
         description="Additional information for custom use that are not "\
